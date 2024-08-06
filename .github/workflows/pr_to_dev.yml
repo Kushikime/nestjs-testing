@@ -1,0 +1,60 @@
+name: Pull request CI/CD
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+    branches:
+      - 'dev'
+
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 14.21.3
+
+    - name: Cache npm dependencies
+      uses: actions/cache@v4
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: ${{ runner.os }}-node-
+
+    - name: Log node.js version
+      run: node -v
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Running tests
+      run: npm run test
+
+  deploy:
+    needs: [test]
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Build Docker Image
+      run: echo "Building Docker image..." # Replace with your Docker build command
+      # Example: docker build -t your-image-name .
+
+    - name: Push Docker Image to JFrog
+      run: echo "Pushing Docker image to JFrog..." # Replace with your JFrog push command
+      # Example: jfrog rt docker-push your-image-name your-jfrog-repo/your-image-name
+
+    - name: Deploy to AKS Cluster
+      run: echo "Deploying to AKS..." # Replace with your AKS deployment commands
+      # Example steps:
+      #   1. Get kubeconfig file from secrets or other secure storage
+      #   2. Update Kubernetes deployment manifest (e.g., with new image tag)
+      #   3. Apply the updated deployment manifest to your AKS cluster (kubectl apply -f deployment.yaml)

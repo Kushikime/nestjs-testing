@@ -13,15 +13,15 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Set up Node.js
-      uses: actions/setup-node@v2
+      uses: actions/setup-node@v4
       with:
         node-version: 14.21.3
 
     - name: Cache npm dependencies
-      uses: actions/cache@v2
+      uses: actions/cache@v4
       with:
         path: ~/.npm
         key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
@@ -43,7 +43,7 @@ jobs:
 
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v2 
+      uses: actions/checkout@v4
 
     - name: Running tests
       run: npm run test
@@ -62,9 +62,3 @@ jobs:
       #   1. Get kubeconfig file from secrets or other secure storage
       #   2. Update Kubernetes deployment manifest (e.g., with new image tag)
       #   3. Apply the updated deployment manifest to your AKS cluster (kubectl apply -f deployment.yaml)
-  test2:
-    needs: [test]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Install dependencies
-        run: npm install

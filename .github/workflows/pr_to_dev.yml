@@ -45,6 +45,9 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v2 
 
+    - name: Running tests
+      run: npm run test
+
     - name: Build Docker Image
       run: echo "Building Docker image..." # Replace with your Docker build command
       # Example: docker build -t your-image-name .
@@ -59,3 +62,9 @@ jobs:
       #   1. Get kubeconfig file from secrets or other secure storage
       #   2. Update Kubernetes deployment manifest (e.g., with new image tag)
       #   3. Apply the updated deployment manifest to your AKS cluster (kubectl apply -f deployment.yaml)
+  test2:
+    needs: [test]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install dependencies
+        run: npm install

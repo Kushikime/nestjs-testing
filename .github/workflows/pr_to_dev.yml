@@ -8,26 +8,31 @@ on:
 
 
 jobs:
-  prepare:
+  test:
     runs-on: ubuntu-latest
+
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
       with:
         node-version: 18.17.1
-        cache: 'npm'
-        cache-dependency-path: package-lock.json
-        run:
-            npm run test
-  test:
-    needs: [prepare]
-    runs-on: ubuntu-latest
-    steps:
-        - uses: actions/checkout@v2
-        - name: Installing dependencies
-          run: npm install
-        - name: npm run test
-          run: npm run test
+
+    - name: Cache npm dependencies
+      uses: actions/cache@v2
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Running tests
+      run: npm run test
 
   deploy:
     needs: [test]
